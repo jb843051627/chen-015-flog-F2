@@ -110,6 +110,15 @@ public class GlobalExceptionResolver{
     }
     
     /**
+     * 建档卡立不住：回执须点明缺的是哪一格 / 越过额度的是哪张卡，文案原样回屏
+     */
+    @ExceptionHandler(com.fc.v2.common.exception.flog.FlogCardRejectException.class)
+    public AjaxResult flogCardReject(com.fc.v2.common.exception.flog.FlogCardRejectException e)
+    {
+        return AjaxResult.error(e.getMessage());
+    }
+
+    /**
      * 拦截未知的运行时异常
      */
     @ExceptionHandler(RuntimeException.class)

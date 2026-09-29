@@ -32,7 +32,7 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "主键")
     private Long id;
 
-    /** 伐区采伐申请建档卡号 */
+    /** 伐区采伐申请建档卡号（自动生成，同一张卡跨版本共用一个号） */
     @TableField("bill_no")
     @ApiModelProperty(value = "伐区采伐申请建档卡号")
     private String billNo;
@@ -42,12 +42,13 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "本卡版本序")
     private Integer nodeNo;
 
-    /** 所属编制单位在册底档 */
+    /** 所属编制单位在册底档主键 */
     @TableField("site_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "所属编制单位在册底档")
-    private Integer siteId;
+    private Long siteId;
 
-    /** 所属单位底档字号 */
+    /** 所属单位底档字号（小班归属认字号+小班号这一对） */
     @TableField("site_no")
     @ApiModelProperty(value = "所属单位底档字号")
     private String siteNo;
@@ -72,6 +73,51 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "皆伐专属株数")
     private Integer clearTrees;
 
+    /** 渐伐专属：分年次数 */
+    @TableField("grad_years")
+    @ApiModelProperty(value = "渐伐专属：分年次数")
+    private Integer gradYears;
+
+    /** 渐伐专属：间隔年数 */
+    @TableField("grad_interval")
+    @ApiModelProperty(value = "渐伐专属：间隔年数")
+    private Integer gradInterval;
+
+    /** 择伐专属：择伐强度(百分数) */
+    @TableField("select_intensity")
+    @ApiModelProperty(value = "择伐专属：择伐强度")
+    private BigDecimal selectIntensity;
+
+    /** 择伐专属：保留株数 */
+    @TableField("reserve_trees")
+    @ApiModelProperty(value = "择伐专属：保留株数")
+    private Integer reserveTrees;
+
+    /** 抚育采伐专属：抚育办法 */
+    @TableField("tend_method")
+    @ApiModelProperty(value = "抚育采伐专属：抚育办法")
+    private String tendMethod;
+
+    /** 抚育采伐专属：每公顷采出量(立方米/公顷) */
+    @TableField("tend_per_ha")
+    @ApiModelProperty(value = "抚育采伐专属：每公顷采出量")
+    private BigDecimal tendPerHa;
+
+    /** 更新采伐专属：更新方式 */
+    @TableField("renew_mode")
+    @ApiModelProperty(value = "更新采伐专属：更新方式")
+    private String renewMode;
+
+    /** 更新采伐专属：完成年度 */
+    @TableField("renew_finish_year")
+    @ApiModelProperty(value = "更新采伐专属：完成年度")
+    private Integer renewFinishYear;
+
+    /** 低质低效林改造专属：目标树种 */
+    @TableField("target_species")
+    @ApiModelProperty(value = "低质低效林改造专属：目标树种")
+    private String targetSpecies;
+
     /** 版本现行标记 1现行 0旧版（列表只摆现行） */
     @TableField("current_flag")
     @ApiModelProperty(value = "版本现行标记")
@@ -87,12 +133,38 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "本卡新报拟采面积(公顷)")
     private BigDecimal fineAmt;
 
+    /** 本版本此刻在年度额度账上占着的立方数（压死/改版退0） */
+    @TableField("held_qty")
+    @ApiModelProperty(value = "占用额度立方数")
+    private BigDecimal heldQty;
+
+    /** 立卡年度（额度账按这一家这一年走） */
+    @TableField("card_year")
+    @ApiModelProperty(value = "立卡年度")
+    private Integer cardYear;
+
+    /** 立卡人（立卡一刻钉住，重录多少回都不挪窝） */
+    @TableField("founder")
+    @ApiModelProperty(value = "立卡人")
+    private String founder;
+
+    /** 立卡时刻 */
+    @TableField("founder_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "立卡时刻")
+    private Date founderTime;
+
+    /** 历次办卡人记事（办一笔续一笔，不覆盖立卡人） */
+    @TableField("handlers")
+    @ApiModelProperty(value = "历次办卡人记事")
+    private String handlers;
+
     /** 核验串（随版本序走） */
     @TableField("content")
     @ApiModelProperty(value = "核验串（随版本序走）")
     private String content;
 
-    /** 拟采强度折到的取用顺位 */
+    /** 拟采强度折到的取用顺位 1轻 2中 3重（系统折算回填，不留手填口子） */
     @TableField("grade_level")
     @ApiModelProperty(value = "拟采强度折到的取用顺位")
     private Integer gradeLevel;
@@ -158,11 +230,11 @@ public class TFlogApplyCard implements Serializable {
         this.nodeNo = nodeNo;
     }
 
-    public Integer getSiteId() {
+    public Long getSiteId() {
         return siteId;
     }
 
-    public void setSiteId(Integer siteId) {
+    public void setSiteId(Long siteId) {
         this.siteId = siteId;
     }
 
@@ -206,6 +278,78 @@ public class TFlogApplyCard implements Serializable {
         this.clearTrees = clearTrees;
     }
 
+    public Integer getGradYears() {
+        return gradYears;
+    }
+
+    public void setGradYears(Integer gradYears) {
+        this.gradYears = gradYears;
+    }
+
+    public Integer getGradInterval() {
+        return gradInterval;
+    }
+
+    public void setGradInterval(Integer gradInterval) {
+        this.gradInterval = gradInterval;
+    }
+
+    public BigDecimal getSelectIntensity() {
+        return selectIntensity;
+    }
+
+    public void setSelectIntensity(BigDecimal selectIntensity) {
+        this.selectIntensity = selectIntensity;
+    }
+
+    public Integer getReserveTrees() {
+        return reserveTrees;
+    }
+
+    public void setReserveTrees(Integer reserveTrees) {
+        this.reserveTrees = reserveTrees;
+    }
+
+    public String getTendMethod() {
+        return tendMethod;
+    }
+
+    public void setTendMethod(String tendMethod) {
+        this.tendMethod = tendMethod;
+    }
+
+    public BigDecimal getTendPerHa() {
+        return tendPerHa;
+    }
+
+    public void setTendPerHa(BigDecimal tendPerHa) {
+        this.tendPerHa = tendPerHa;
+    }
+
+    public String getRenewMode() {
+        return renewMode;
+    }
+
+    public void setRenewMode(String renewMode) {
+        this.renewMode = renewMode;
+    }
+
+    public Integer getRenewFinishYear() {
+        return renewFinishYear;
+    }
+
+    public void setRenewFinishYear(Integer renewFinishYear) {
+        this.renewFinishYear = renewFinishYear;
+    }
+
+    public String getTargetSpecies() {
+        return targetSpecies;
+    }
+
+    public void setTargetSpecies(String targetSpecies) {
+        this.targetSpecies = targetSpecies;
+    }
+
     public Integer getCurrentFlag() {
         return currentFlag;
     }
@@ -228,6 +372,46 @@ public class TFlogApplyCard implements Serializable {
 
     public void setFineAmt(BigDecimal fineAmt) {
         this.fineAmt = fineAmt;
+    }
+
+    public BigDecimal getHeldQty() {
+        return heldQty;
+    }
+
+    public void setHeldQty(BigDecimal heldQty) {
+        this.heldQty = heldQty;
+    }
+
+    public Integer getCardYear() {
+        return cardYear;
+    }
+
+    public void setCardYear(Integer cardYear) {
+        this.cardYear = cardYear;
+    }
+
+    public String getFounder() {
+        return founder;
+    }
+
+    public void setFounder(String founder) {
+        this.founder = founder;
+    }
+
+    public Date getFounderTime() {
+        return founderTime;
+    }
+
+    public void setFounderTime(Date founderTime) {
+        this.founderTime = founderTime;
+    }
+
+    public String getHandlers() {
+        return handlers;
+    }
+
+    public void setHandlers(String handlers) {
+        this.handlers = handlers;
     }
 
     public String getContent() {

@@ -52,6 +52,12 @@ public class TFlogStandDoc implements Serializable {
     @ApiModelProperty(value = "管辖林业站(省—市—县)")
     private String roadName;
 
+    /** 管辖林业站对应部门id（本站可见圈界用；空则按 road_name 兜底） */
+    @TableField("station_dept_id")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "管辖林业站对应部门id")
+    private Long stationDeptId;
+
     /** 单卡拟采蓄积轻度线上限(立方米) */
     @TableField("th1_max")
     @ApiModelProperty(value = "单卡拟采蓄积轻度线上限(立方米)")
@@ -142,6 +148,14 @@ public class TFlogStandDoc implements Serializable {
 
     public void setRoadName(String roadName) {
         this.roadName = roadName;
+    }
+
+    public Long getStationDeptId() {
+        return stationDeptId;
+    }
+
+    public void setStationDeptId(Long stationDeptId) {
+        this.stationDeptId = stationDeptId;
     }
 
     public BigDecimal getTh1Max() {
