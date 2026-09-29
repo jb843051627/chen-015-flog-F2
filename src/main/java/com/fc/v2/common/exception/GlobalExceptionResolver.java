@@ -101,6 +101,16 @@ public class GlobalExceptionResolver{
     }
     
     /**
+     * 伐区额度账业务异常：缺栏、超额、越界等，回执须点明是哪一格、哪张卡
+     */
+    @ExceptionHandler(com.fc.v2.common.exception.biz.FlogBizException.class)
+    public AjaxResult flogBizException(com.fc.v2.common.exception.biz.FlogBizException e)
+    {
+        logger.warn("额度账业务回执: {}", e.getMessage());
+        return AjaxResult.error(e.getMessage());
+    }
+
+    /**
      * 演示模式异常
      */
     @ExceptionHandler(DemoModeException.class)

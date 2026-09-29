@@ -44,8 +44,9 @@ public class TFlogApplyCard implements Serializable {
 
     /** 所属编制单位在册底档 */
     @TableField("site_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "所属编制单位在册底档")
-    private Integer siteId;
+    private Long siteId;
 
     /** 所属单位底档字号 */
     @TableField("site_no")
@@ -67,10 +68,66 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "采伐方式")
     private Integer cutMode;
 
-    /** 皆伐专属：株数 */
+    /** 皆伐专属：株数（皆伐要的面积走通用栏 fineAmt 新报拟采面积） */
     @TableField("clear_trees")
     @ApiModelProperty(value = "皆伐专属株数")
     private Integer clearTrees;
+
+    /** 渐伐专属：分年次数 */
+    @TableField("grad_years")
+    @ApiModelProperty(value = "渐伐专属分年次数")
+    private Integer gradYears;
+
+    /** 渐伐专属：间隔年数 */
+    @TableField("grad_interval")
+    @ApiModelProperty(value = "渐伐专属间隔年数")
+    private Integer gradInterval;
+
+    /** 择伐专属：择伐强度(%) */
+    @TableField("select_intensity")
+    @ApiModelProperty(value = "择伐专属择伐强度(%)")
+    private BigDecimal selectIntensity;
+
+    /** 择伐专属：保留株数 */
+    @TableField("select_keep_trees")
+    @ApiModelProperty(value = "择伐专属保留株数")
+    private Integer selectKeepTrees;
+
+    /** 抚育采伐专属：抚育办法 */
+    @TableField("tend_method")
+    @ApiModelProperty(value = "抚育采伐专属抚育办法")
+    private String tendMethod;
+
+    /** 抚育采伐专属：每公顷采出量(立方米/公顷) */
+    @TableField("tend_per_ha")
+    @ApiModelProperty(value = "抚育采伐专属每公顷采出量")
+    private BigDecimal tendPerHa;
+
+    /** 更新采伐专属：更新方式 */
+    @TableField("renew_mode")
+    @ApiModelProperty(value = "更新采伐专属更新方式")
+    private String renewMode;
+
+    /** 更新采伐专属：完成年度 */
+    @TableField("renew_finish_year")
+    @ApiModelProperty(value = "更新采伐专属完成年度")
+    private Integer renewFinishYear;
+
+    /** 低质低效林改造专属：目标树种 */
+    @TableField("reform_tree")
+    @ApiModelProperty(value = "低质低效林改造专属目标树种")
+    private String reformTree;
+
+    /** 立卡人（立卡那一刻钉住，重录多少回都不挪窝） */
+    @TableField("register_by")
+    @ApiModelProperty(value = "立卡人（钉住不挪）")
+    private String registerBy;
+
+    /** 立卡时刻 */
+    @TableField("register_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "立卡时刻")
+    private Date registerTime;
 
     /** 版本现行标记 1现行 0旧版（列表只摆现行） */
     @TableField("current_flag")
@@ -134,6 +191,22 @@ public class TFlogApplyCard implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    /**
+     * 重录源卡id（不入库）：重录（含改挂别家档、改小班）时带现行源卡id，
+     * 服务层据此认领旧版升版；空着则按底档字号+小班号这对认二次上报。
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "重录源卡id（不入库）", hidden = true)
+    private transient Long reviseId;
+
+    public Long getReviseId() {
+        return reviseId;
+    }
+
+    public void setReviseId(Long reviseId) {
+        this.reviseId = reviseId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -158,11 +231,11 @@ public class TFlogApplyCard implements Serializable {
         this.nodeNo = nodeNo;
     }
 
-    public Integer getSiteId() {
+    public Long getSiteId() {
         return siteId;
     }
 
-    public void setSiteId(Integer siteId) {
+    public void setSiteId(Long siteId) {
         this.siteId = siteId;
     }
 
@@ -196,6 +269,94 @@ public class TFlogApplyCard implements Serializable {
 
     public void setCutMode(Integer cutMode) {
         this.cutMode = cutMode;
+    }
+
+    public Integer getGradYears() {
+        return gradYears;
+    }
+
+    public void setGradYears(Integer gradYears) {
+        this.gradYears = gradYears;
+    }
+
+    public Integer getGradInterval() {
+        return gradInterval;
+    }
+
+    public void setGradInterval(Integer gradInterval) {
+        this.gradInterval = gradInterval;
+    }
+
+    public BigDecimal getSelectIntensity() {
+        return selectIntensity;
+    }
+
+    public void setSelectIntensity(BigDecimal selectIntensity) {
+        this.selectIntensity = selectIntensity;
+    }
+
+    public Integer getSelectKeepTrees() {
+        return selectKeepTrees;
+    }
+
+    public void setSelectKeepTrees(Integer selectKeepTrees) {
+        this.selectKeepTrees = selectKeepTrees;
+    }
+
+    public String getTendMethod() {
+        return tendMethod;
+    }
+
+    public void setTendMethod(String tendMethod) {
+        this.tendMethod = tendMethod;
+    }
+
+    public BigDecimal getTendPerHa() {
+        return tendPerHa;
+    }
+
+    public void setTendPerHa(BigDecimal tendPerHa) {
+        this.tendPerHa = tendPerHa;
+    }
+
+    public String getRenewMode() {
+        return renewMode;
+    }
+
+    public void setRenewMode(String renewMode) {
+        this.renewMode = renewMode;
+    }
+
+    public Integer getRenewFinishYear() {
+        return renewFinishYear;
+    }
+
+    public void setRenewFinishYear(Integer renewFinishYear) {
+        this.renewFinishYear = renewFinishYear;
+    }
+
+    public String getReformTree() {
+        return reformTree;
+    }
+
+    public void setReformTree(String reformTree) {
+        this.reformTree = reformTree;
+    }
+
+    public String getRegisterBy() {
+        return registerBy;
+    }
+
+    public void setRegisterBy(String registerBy) {
+        this.registerBy = registerBy;
+    }
+
+    public Date getRegisterTime() {
+        return registerTime;
+    }
+
+    public void setRegisterTime(Date registerTime) {
+        this.registerTime = registerTime;
     }
 
     public Integer getClearTrees() {
